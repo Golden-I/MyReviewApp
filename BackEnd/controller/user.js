@@ -1,4 +1,7 @@
-const User = require("../models/user");
+const nodemailer = require("nodemailer");
+const User = require("../models/user.js");
+const EmailVerificationToken = require("../models/emailVerificationToken.js");
+const { isValidObjectId } = require("mongoose");
 
 exports.create = async (req, res) => {
   const { name, email, password } = req.body;
@@ -9,5 +12,56 @@ exports.create = async (req, res) => {
 
   const newUser = new User({ name, email, password });
   await newUser.save();
-  res.status(201).json({ user: newUser });
+
+  //generate 6 digit otp
+  let OTP = "";
+  for (let i = 0; i <= 5; i++) {
+    const randomValue = Math.round(Math.random() * 9);
+    OTP += randomValue;
+  }
+  //store otp inside our db
+  const newEmailVerificationToken = new EmailVerificationToken({
+    owner: newUser._id,
+    token: OTP,
+  });
+  await newEmailVerificationToken.save();
+
+  //send otp to our user
+  var transport = nodemailer.createTransport({
+    host: "sandbox.smtp.mailtrap.io",
+    port: 2525,
+    auth: {
+      user: "96628649a63c20",
+      pass: "5fe34ee566a9cd",
+    },
+  });
+
+  transport.sendMail({
+    from: "mhazboun1@gmail.com",
+    to: newUser.email,
+    subject: "Email Verification",
+    html: `
+    <p> your verification OTP </P>
+    <h1>${OTP}</h1>
+    `,
+  });
+
+  res.status(201).json({
+    message:
+      "Verification has been set to your email account, please verify your email!",
+  });
+};
+
+exports.verifyEmail = async (req, res) => {
+  const { userId, OTP } = req.body;
+
+  if (!isValidObjectId(userID)) return res.json({ error: "invalid user!" });
+
+  const user = await User.findById(userId);
+  if (!user) return res.json({ error: "User not found!" });
+
+  if (user.isVerified) return res.json({ error: "User already verified" });
+
+  const token = await EmailVerificationToken.findOne({ owner: userID });
+  if (!token) return res.json({ error: "Token not found! " });
 };
