@@ -1,9 +1,10 @@
 const nodemailer = require("nodemailer");
 const User = require("../models/user.js");
 const EmailVerificationToken = require("../models/emailVerificationToken.js");
+
 const { isValidObjectId } = require("mongoose");
 
-exports.create = async (req, res) => {
+exports.createUser = async (req, res) => {
   const { name, email, password } = req.body;
 
   const oldUser = await User.findOne({ email });
@@ -37,7 +38,7 @@ exports.create = async (req, res) => {
   });
 
   transport.sendMail({
-    from: "mhazboun1@gmail.com",
+    from: "verification@myreviewapp.com",
     to: newUser.email,
     subject: "Email Verification",
     html: `
@@ -65,3 +66,25 @@ exports.verifyEmail = async (req, res) => {
   const token = await EmailVerificationToken.findOne({ owner: userID });
   if (!token) return res.json({ error: "Token not found! " });
 };
+
+isMatched = await token.compareToken(OTP);
+if (!isMatched) return res.json({ error: "Please submit a valid OTP!" });
+user.isVerified = true;
+await user.save();
+await newEmailVerificationToken.findByIdAndDelete(token._id);
+var transport = nodemailer.createTransport({
+  host: "sandbox.smtp.mailtrap.io",
+  port: 2525,
+  auth: {
+    user: "96628649a63c20",
+    pass: "5fe34ee566a9cd",
+  },
+});
+
+transport.sendMail({
+  from: "verification@myreviewapp.com",
+  to: user.email,
+  subject: "Welcome Email",
+  html: "<h1>Thanks for joying MyReviewApp!</h1>",
+});
+res.json({ message: "Your email is verified." });

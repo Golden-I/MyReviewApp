@@ -1,3 +1,5 @@
+//express validator in order not to store row data and store the correct data.
+
 const { check, validationResult } = require("express-validator");
 
 exports.userValidator = [
@@ -11,8 +13,8 @@ exports.userValidator = [
     .not()
     .isEmpty()
     .withMessage("Please enter your password!")
-    .isLength({ min: 8, max: 20 })
-    .withMessage("Password must be 8-20 characters!"),
+    .isLength({ min: 6, max: 20 })
+    .withMessage("Password must be 6-20 characters!"),
 ];
 
 exports.validate = (req, res, next) => {
