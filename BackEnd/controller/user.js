@@ -1,3 +1,4 @@
+const nodemailer = require("nodemailer");
 const User = require("../models/user.js");
 const {
   EmailVerificationToken,
