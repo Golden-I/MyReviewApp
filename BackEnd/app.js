@@ -1,12 +1,10 @@
 const express = require("express");
-require("../BackEnd/db");
-// const dotenv = require("dotenv").config();
+const db = require("../BackEnd/db"); // Assuming this is the module for connecting to the database
 const userRouter = require("../BackEnd/routes/user");
 const app = express();
 app.use(express.json());
-//this method confirm anything come from front end to json format
 
-const port = process.env.port || 8000;
+const port = process.env.PORT || 8000; // Use uppercase 'PORT' for environment variable
 
 app.use("/api/user", userRouter);
 
@@ -15,11 +13,15 @@ app.post("/sign-in", (req, res, next) => {
   if (!email || !password) {
     return res.status(400).json({ error: "email or password missing!" });
   }
+
+  // TODO: Implement authentication logic here
+
+  next(); // Call next() to move on to the next middleware or route handler
 });
 
 // app.get("/about", (req, res) => {
 //   res.send("<h1>Hello I am from your backend about</h1>");
 // });
 
-//listen for requests
+// Listen for requests
 app.listen(port, () => console.log(`Server is running on port ${port}`));

@@ -1,4 +1,5 @@
-const crypto = require("crypto");
+const nodemailer = require("nodemailer");
+// const crypto = require("crypto");
 const User = require("../models/user.js");
 const {
   EmailVerificationToken,
@@ -134,7 +135,7 @@ exports.forgetPassword = async (req, rest) => {
   if (alreadyHasToken)
     return sendError(
       res,
-      "only after one hour you can request for another token!"
+      "Only after one hour you can request for another token!"
     );
   const token = await generateRandomByte();
   const newPasswordResetToken = await PasswordResetToken({
