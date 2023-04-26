@@ -1,6 +1,7 @@
 const nodemailer = require("nodemailer");
 // const crypto = require("crypto");
-const User = require("../models/user.js");
+const generateRandomByte = require("../utils/mail");
+// const User = require("../models/user.js");
 const {
   EmailVerificationToken,
 } = require("../models/emailVerificationToken.js");
@@ -125,10 +126,10 @@ exports.resendEmailVerificationToken = async (req, res) => {
   });
 };
 
-exports.forgetPassword = async (req, rest) => {
+exports.forgetPassword = async (req, res) => {
   const { email } = req.body;
   if (!email) return sendError(res, "Email is Missing!");
-  const user = await user.findOne({ email });
+  const user = await User.findOne({ email });
   if (!user) return sendError(res, "user not found!", 404);
 
   const alreadyHasToken = await passwordResetToken.findOne({ owner: user._id });
@@ -149,7 +150,7 @@ exports.forgetPassword = async (req, rest) => {
   const transport = generateMailTransporter();
 
   transport.sendMail({
-    from: "security@reviewapp.com",
+    from: "security@myreviewapp.com",
     to: user.email,
     subject: "Reset Password Link",
     html: `

@@ -1,26 +1,46 @@
-//express validator in order not to store row data and store the correct data.
-
 const { check, validationResult } = require("express-validator");
+const { isValidObjectId } = require("mongoose");
+const PasswordResetToken = require("../models/passwordResetToken");
+const { sendError } = require("../utils/helper");
 
 exports.userValidator = [
-  check("name").trim().not().isEmpty().withMessage("Please enter your name!"),
-  check("email")
-    .normalizeEmail()
-    .isEmail()
-    .withMessage("Please enter a valid email"),
+  check("name").trim().not().isEmpty().withMessage("Name is missing!"),
+  check("email").normalizeEmail().isEmail().withMessage("Email is invalid!"),
   check("password")
     .trim()
     .not()
     .isEmpty()
-    .withMessage("Please enter your password!")
-    .isLength({ min: 6, max: 20 })
-    .withMessage("Password must be 6-20 characters!"),
+    .withMessage("Password is missing!")
+    .isLength({ min: 8, max: 20 })
+    .withMessage("Password must be 8 to 20 characters long!"),
 ];
 
 exports.validate = (req, res, next) => {
-  const error = validationResult(req).array();
-  if (error.length) {
-    return res.json({ error: error[0].msg });
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const error = errors.array()[0];
+    return res.json({ error: error.msg });
   }
+  next();
+};
+
+exports.isValidPassResetToken = async (req, res, next) => {
+  const { token, userId } = req.body;
+
+  if (!token.trim() || !isValidObjectId(userId)) {
+    return sendError(res, "Invalid request!");
+  }
+
+  const resetToken = await PasswordResetToken.findOne({ owner: userId });
+  if (!resetToken) {
+    return sendError(res, "Unauthorized access, invalid request!");
+  }
+
+  const matched = await resetToken.compareToken(token);
+  if (!matched) {
+    return sendError(res, "Unauthorized access, invalid request!");
+  }
+
+  req.resetToken = resetToken;
   next();
 };

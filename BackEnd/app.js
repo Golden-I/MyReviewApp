@@ -1,6 +1,6 @@
 const express = require("express");
 const db = require("../BackEnd/db"); // Assuming this is the module for connecting to the database
-const userRouter = require("../BackEnd/routes/user");
+const userRouter = require("../BackEnd/controller/user");
 const app = express();
 app.use(express.json());
 

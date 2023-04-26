@@ -4,9 +4,9 @@ const {
   verifyEmail,
   resendEmailVerificationToken,
   forgetPassword,
-} = require("../controllers/user");
+} = require("../controller/user");
 const { isValidPassResetToken } = require("../middlewares/user");
-const { userValidtor, validate } = require("../middlewares/validator");
+const { userValidator, validate } = require("../middlewares/validator");
 
 const router = express.Router();
 
