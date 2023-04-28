@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 //const mongoose = require("mongoose"); to run the server
 mongoose
-  .connect("mongodb://localhost:27017/MyReviewApp")
+  .connect(process.env.MONGO_URI)
 
   .then(() => {
     console.log("db is connected");

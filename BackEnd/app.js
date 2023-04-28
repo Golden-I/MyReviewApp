@@ -1,8 +1,11 @@
 const express = require("express");
+const morgan = require("morgan");
+const dotenv = require("dotenv").config();
 const db = require("../BackEnd/db"); // Assuming this is the module for connecting to the database
 const userRouter = require("./routes/user");
 const app = express();
 app.use(express.json());
+app.use(morgan("dev"));
 
 const port = process.env.PORT || 8000; // Use uppercase 'PORT' for environment variable
 
