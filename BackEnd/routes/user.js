@@ -1,16 +1,20 @@
-const express = require("express");
+const { Router } = require("express");
+
 const {
   create,
   verifyEmail,
   resendEmailVerificationToken,
   forgetPassword,
 } = require("../controller/user");
-const { isValidPassResetToken } = require("../middlewares/user");
-const { userValidator, validate } = require("../middlewares/validator");
+const {
+  userValidator,
+  validate,
+  isValidPassResetToken,
+} = require("../middlewares/validator");
 
-const router = express.Router();
+const router = new Router();
 
-router.post("/create", userValidtor, validate, create);
+router.post("/create", userValidator, validate, create);
 router.post("/verify-email", verifyEmail);
 router.post("/resend-email-verification-token", resendEmailVerificationToken);
 router.post("/forget-password", forgetPassword);
