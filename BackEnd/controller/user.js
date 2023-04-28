@@ -218,4 +218,4 @@ exports.signIn = async (req, res) => {
   });
 };
 
-// const jwtToken = jwt.sign({ userId: user._id }, "jufjlajkdjdj" {exiresIn: "1d"});
+// const jwtToken = jwt.sign({ userId: user._id }, "token" {exiresIn: "1d"});
